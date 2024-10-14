@@ -7,32 +7,30 @@ X    X| OOOO
 
 gameSelectionText = '''   1 Jugador: "1"
    2 Jugadores: "2"
-   Salir: "EXIT"'''
+   Salir: "exit"'''
 x = 'X'
 o = 'O'
+
+genericErrorMsg = "\nNo se como te la has apañado, pero la has cagado, enhorabuena"
 
 def homecoming():
     print(f'{wellcomeImage}\n')
     gameSelection()
 
 def gameSelection():
+    gameMode = "exit"
     print(f'Opciones:\n{gameSelectionText}')
     gameMode = input("Introduzca el numero de jugadores: ")
-    if gameMode != "1" and gameMode != "2" and gameMode != "EXIT":
-        print("Entrada erronea")
+    if gameMode != "1" and gameMode != "2" and gameMode != "exit":
+        print("\nEntrada erronea\n")
         gameSelection()
     elif(gameMode == "1"):
-        p1Game()
+        autoPlayer(1)
     elif(gameMode == "2"):
-        p2Game()
-    elif(gameMode == "EXIT"):
-        print("Saliendo del juego...")
-
-def p1Game():
-    autoPlayer(1)
-
-def p2Game():
-    autoPlayer(2)
+        autoPlayer(2)
+    elif(gameMode == "exit"):
+        print("\nSaliendo del juego...")
+        exit
 
 def autoPlayer(playerNumber):
     possitionList = [1, 2, 3, 4, 5, 6, 7, 8, 9]
@@ -49,27 +47,55 @@ def autoPlayer(playerNumber):
     winnerManager(winnerMain, isIA, possitionList)
 
 def winnerManager(winnerMain, isIA, possitionList):
-    print(x)
+    if winnerMain == -1:
+        print(f"¡¡¡EMPATE!!!")
+    elif winnerMain == 0:
+        if isIA == True:
+            print("\nIntroducir texto de victoria de IA")
+        elif isIA == False:
+            print("\nIntroducir mensaje de que j2 (O) ha ganado")
+        else:
+            print(genericErrorMsg)
+    elif winnerMain == 1:
+        if isIA == True:
+            print("\nIntroducir mensaje de victoria humano contra IA")
+        elif isIA == False:
+            print("\nIntroducir mensaje de victoria de J1 (X)")
+        else:
+            print(genericErrorMsg)
+    else:
+        print(genericErrorMsg)
+    print("\n¿Pega una revanchita o algo no?")
+    retry = input("s/n: ")
+    if retry == 's':
+            gameSelection()
+            exit
+    if retry == 'n':
+            print("\nSaliendo del juego...")
+            exit
+    else:
+            print("\n¿Tu eres tonto o que? no es tan dificil poner s o n, por el amor de dios, por tonto repites, ea, porque me ha costado mucho hacerlo >:(\n")
+            gameSelection()
 
 def tileDrawer(possitionList, isIA, isMain):
     winnerMain = 0 #-1 empate, 0 pierde el Main, 1 gana el Main
     turnCount = 0 #Cuenta cuantos turnos llevan
     if isIA == True:
         if isMain == True:
-            print(f"Su turno:")
+            print(f"\nSu turno:")
         elif isMain == False:
-            print(f"Turno de la IA")
+            print(f"\nTurno de la IA")
         else:
             print(f"No se como te la has apañado, pero la has cagado, enhorabuena")
     elif isIA == False:
         if isMain == True:
-            print(f"Turno del jugador 1 (X)")
+            print(f"\nTurno del jugador 1 (X)")
         elif isMain == False:
-            print(f"Turno del jugador 2 (O)")
+            print(f"\nTurno del jugador 2 (O)")
         else:
-            print(f"No se como te la has apañado, pero la has cagado, enhorabuena")
+            print(genericErrorMsg)
     else:
-        print(f"No se como te la has apañado, pero la has cagado, enhorabuena")
+        print(genericErrorMsg)
     a, b, c, d, e, f, g, h, i = possitionList
     print(f" {a} | {b} | {c}\n-----------\n {d} | {e} | {f}\n-----------\n {g} | {h} | {i}")
     winnerMain = loopGestor(possitionList, isIA, isMain, turnCount)
@@ -92,5 +118,38 @@ def winCheck(possitionList, turnCount):
                 winnerMain = 1
             else:
                 winnerMain = 0
+        if g == h == i:
+            if a == x:
+                winnerMain = 1
+            else:
+                winnerMain = 0
+        if c == f == i:
+            if a == x:
+                winnerMain = 1
+            else:
+                winnerMain = 0
+        if a == e == i:
+            if a == x:
+                winnerMain = 1
+            else:
+                winnerMain = 0
+        if b == e == h:
+            if a == x:
+                winnerMain = 1
+            else:
+                winnerMain = 0
+        if c == e == g:
+            if a == x:
+                winnerMain = 1
+            else:
+                winnerMain = 0
+        if d == e == f:
+            if a == x:
+                winnerMain = 1
+            else:
+                winnerMain = 0
+    if turnCount >= 9:
+        winnerMain = -1
+    return winnerMain
 
 homecoming()
