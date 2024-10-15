@@ -47,24 +47,26 @@ def autoPlayer(playerNumber):
     winnerManager(winnerMain, isIA, possitionList)
 
 def winnerManager(winnerMain, isIA, possitionList):
+    a, b, c, d, e, f, g, h, i = possitionList
+    print(f"\n {a} | {b} | {c}\n-----------\n {d} | {e} | {f}\n-----------\n {g} | {h} | {i}")
     if winnerMain == -1:
         print(f"¡¡¡EMPATE!!!")
     elif winnerMain == 0:
         if isIA == True:
-            print("\nIntroducir texto de victoria de IA")
+            print("Introducir texto de victoria de IA")
         elif isIA == False:
-            print("\nIntroducir mensaje de que j2 (O) ha ganado")
+            print("Introducir mensaje de que j2 (O) ha ganado")
         else:
-            print(genericErrorMsg)
+            print(genericErrorMsg, "0")
     elif winnerMain == 1:
         if isIA == True:
-            print("\nIntroducir mensaje de victoria humano contra IA")
+            print("Introducir mensaje de victoria humano contra IA")
         elif isIA == False:
-            print("\nIntroducir mensaje de victoria de J1 (X)")
+            print("Introducir mensaje de victoria de J1 (X)")
         else:
-            print(genericErrorMsg)
+            print(genericErrorMsg, "1")
     else:
-        print(genericErrorMsg)
+        print(genericErrorMsg, "2")
     print("\n¿Pega una revanchita o algo no?")
     retry = input("s/n: ")
     if retry == 's':
@@ -73,39 +75,68 @@ def winnerManager(winnerMain, isIA, possitionList):
     if retry == 'n':
             print("\nSaliendo del juego...")
             exit
-    else:
-            print("\n¿Tu eres tonto o que? no es tan dificil poner s o n, por el amor de dios, por tonto repites, ea, porque me ha costado mucho hacerlo >:(\n")
-            gameSelection()
 
 def tileDrawer(possitionList, isIA, isMain):
     winnerMain = 0 #-1 empate, 0 pierde el Main, 1 gana el Main
-    turnCount = 0 #Cuenta cuantos turnos llevan
+    turnCount = 0 #Cuenta cuantos turnos llevan            #COMPROBAR, ver como poner lo de turnCount y lo de winnerMain para que no se inicialice a 0
     if isIA == True:
         if isMain == True:
             print(f"\nSu turno:")
         elif isMain == False:
             print(f"\nTurno de la IA")
         else:
-            print(f"No se como te la has apañado, pero la has cagado, enhorabuena")
+            print(genericErrorMsg, "3")
     elif isIA == False:
         if isMain == True:
             print(f"\nTurno del jugador 1 (X)")
         elif isMain == False:
             print(f"\nTurno del jugador 2 (O)")
         else:
-            print(genericErrorMsg)
+            print(genericErrorMsg, "4")
     else:
-        print(genericErrorMsg)
+        print(genericErrorMsg, "5")
     a, b, c, d, e, f, g, h, i = possitionList
     print(f" {a} | {b} | {c}\n-----------\n {d} | {e} | {f}\n-----------\n {g} | {h} | {i}")
     winnerMain = loopGestor(possitionList, isIA, isMain, turnCount)
     return(winnerMain)
 
-def loopGestor(possitionListIN, isIAIN, isMainIN, turnCount):
-    return(False)
+def loopGestor(possitionList, isIA, isMain, turnCount):
+    if isIA == True:
+        if isMain == True:
+            tileChecker(possitionList, isMain)
+            isMain = False
+            ++turnCount
+            if winCheck(possitionList, turnCount) == 2: #No se ha acabado la partida
+                return(tileDrawer(possitionList, isIA, isMain))
+            elif winCheck(possitionList, turnCount) == -1: #Empate
+                return(-1)
+            
+
+def tileChecker(possitionList, isMain):
+    if isMain == True:
+        tileSelection = int(input("Seleccione la casilla en la que jugar (X): "))
+        if tileSelection <= 0 or tileSelection >= 10:
+            print("El indice escogido esta fuera de la casilla, introduzca un numero valido (1-9)\n")
+            tileChecker(possitionList, isMain)
+        else:
+            if possitionList[tileSelection -1] == x or possitionList[tileSelection -1] == o:
+                print("El indice escogido ya está ocupado\n")
+            else:
+                possitionList[tileSelection -1] = x
+    else:
+        tileSelection = int(input("Seleccione la casilla en la que jugar (o): "))
+        if tileSelection <= 0 or tileSelection >= 10:
+            print("El indice escogido esta fuera de la casilla, introduzca un numero valido (1-9)\n")
+            tileChecker(possitionList, isMain)
+        else:
+            if possitionList[tileSelection -1] == x or possitionList[tileSelection -1] == o:
+                print("El indice escogido ya está ocupado\n")
+            else:
+                possitionList[tileSelection -1] = o
+
 
 def winCheck(possitionList, turnCount):
-    winnerMain = 2;
+    winnerMain = 2
     if turnCount >= 5:
         a, b, c, d, e, f, g, h, i = possitionList
         if a == b == c:
