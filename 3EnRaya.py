@@ -1,3 +1,5 @@
+import random
+
 wellcomeImage = """X    X| OOOO
  X  X |OO  OO
   XX  |O    O
@@ -101,36 +103,71 @@ def tileDrawer(possitionList, isIA, isMain, turnCount):
 
 def loopGestor(possitionList, isIA, isMain, turnCount):
     if isIA == True:
-        if isMain == True:
+        if isMain == True: #1P IA
             tileChecker(possitionList, isMain)
             isMain = False
-            ++turnCount
+            turnCount += 1
+            print(f"Turno {turnCount}")
             hasWon = winCheck(possitionList, turnCount)
             if  hasWon== 2: #No se ha acabado la partida
                 return(tileDrawer(possitionList, isIA, isMain, turnCount))
             elif hasWon == -1: #Empate
                 return(-1)
-        else:
-            print("Añadir la funcion de la IA")
+            elif hasWon == 0:
+                return(0)
+            elif hasWon == 1:
+                return(1)
+        else: #1P IA
+            autoIAnt(possitionList)
+            isMain = True
+            turnCount += 1
+            hasWon = winCheck(possitionList, turnCount)
+            if hasWon == 2: #No se ha acabado la partida
+                return(tileDrawer(possitionList, isIA, isMain, turnCount))
+            elif hasWon == -1: #Empate
+                return(-1)
+            elif hasWon == 0:
+                return(1)
+            elif hasWon == 1:
+                return(0)
     else:
-        if isMain == True:
+        if isMain == True: #2P J1
             tileChecker(possitionList, isMain)
             isMain = False
-            ++turnCount
+            turnCount += 1
+            print(f"Turno {turnCount}")
             hasWon = winCheck(possitionList, turnCount)
-            if  hasWon== 2: #No se ha acabado la partida
+            if  hasWon == 2: #No se ha acabado la partida
                 return(tileDrawer(possitionList, isIA, isMain, turnCount))
             elif hasWon == -1: #Empate
                 return(-1)
-        else:
+            elif hasWon == 0:
+                return(0)
+            elif hasWon == 1:
+                return(1)
+        else: #2P J2
             tileChecker(possitionList, isMain)
             isMain = True
-            ++turnCount
+            turnCount += 1
+            print(f"Turno {turnCount}")
             hasWon = winCheck(possitionList, turnCount)
             if  hasWon== 2: #No se ha acabado la partida
                 return(tileDrawer(possitionList, isIA, isMain, turnCount))
             elif hasWon == -1: #Empate
                 return(-1)
+            elif hasWon == 0:
+                return(1)
+            elif hasWon == 1:
+                return(0)
+
+def autoIAnt(possitionList):
+    availableList = []
+    for tile in possitionList:
+        if tile != o and tile != x:
+            availableList.append(tile)
+    randomEl = random.choice(availableList)
+    elIndex = possitionList.index(randomEl)
+    possitionList[elIndex] = o
 
 def tileChecker(possitionList, isMain):
     if isMain == True:
@@ -138,22 +175,29 @@ def tileChecker(possitionList, isMain):
         if tileSelection <= 0 or tileSelection >= 10:
             print("El indice escogido esta fuera de la casilla, introduzca un numero valido (1-9)\n")
             tileChecker(possitionList, isMain)
+            exit
         else:
             if possitionList[tileSelection -1] == x or possitionList[tileSelection -1] == o:
                 print("El indice escogido ya está ocupado\n")
+                tileChecker(possitionList, isMain)
+                exit
             else:
                 possitionList[tileSelection -1] = x
+                exit
     else:
         tileSelection = int(input("Seleccione la casilla en la que jugar (o): "))
         if tileSelection <= 0 or tileSelection >= 10:
             print("El indice escogido esta fuera de la casilla, introduzca un numero valido (1-9)\n")
             tileChecker(possitionList, isMain)
+            exit
         else:
             if possitionList[tileSelection -1] == x or possitionList[tileSelection -1] == o:
                 print("El indice escogido ya está ocupado\n")
+                tileChecker(possitionList, isMain)
+                exit
             else:
                 possitionList[tileSelection -1] = o
-#Problema, al coger un indice ocupado le da el turno al contrincante
+                exit
 
 def winCheck(possitionList, turnCount):
     winnerMain = 2
@@ -164,44 +208,43 @@ def winCheck(possitionList, turnCount):
                 winnerMain = 1
             else:
                 winnerMain = 0
-        if a == d == g:
+        elif a == d == g:
             if a == x:
                 winnerMain = 1
             else:
                 winnerMain = 0
-        if g == h == i:
+        elif g == h == i:
             if a == x:
                 winnerMain = 1
             else:
                 winnerMain = 0
-        if c == f == i:
+        elif c == f == i:
             if a == x:
                 winnerMain = 1
             else:
                 winnerMain = 0
-        if a == e == i:
+        elif a == e == i:
             if a == x:
                 winnerMain = 1
             else:
                 winnerMain = 0
-        if b == e == h:
+        elif b == e == h:
             if a == x:
                 winnerMain = 1
             else:
                 winnerMain = 0
-        if c == e == g:
+        elif c == e == g:
             if a == x:
                 winnerMain = 1
             else:
                 winnerMain = 0
-        if d == e == f:
+        elif d == e == f:
             if a == x:
                 winnerMain = 1
             else:
                 winnerMain = 0
-    if turnCount >= 9:
-        winnerMain = -1
+        elif turnCount >= 9:
+            winnerMain = -1
     return winnerMain
-#No hace ni media mierda, checkea si se ejecuta donde se debe
 
 homecoming()
