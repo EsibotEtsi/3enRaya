@@ -1,17 +1,17 @@
 #Modulo necesario para el funcionamiento de la IAnt
 import random
-
+from colorama import init, Fore
 
 
 #Cadena de texto que sirve como un pequeño y cutre menu ASCII para el juego
-wellcomeImage = """\n\nX    X\t OOOO \tX    X
- X  X \tOO  OO\t X  X 
-  XX  \tO    O\t  XX  
- X  X \tOO  OO\t X  X 
-X    X\t OOOO \tX    X
+wellcomeImage = f"""\n\n{Fore.BLUE}X    X{Fore.RESET}\t {Fore.RED}OOOO{Fore.RESET} \t{Fore.BLUE}X    X
+ X  X {Fore.RESET}\t{Fore.RED}OO  OO{Fore.RESET}\t{Fore.BLUE} X  X 
+  XX  {Fore.RESET}\t{Fore.RED}O    O{Fore.RESET}\t{Fore.BLUE}  XX  
+ X  X {Fore.RESET}\t{Fore.RED}OO  OO{Fore.RESET}\t{Fore.BLUE} X  X 
+X    X{Fore.RESET}\t {Fore.RED}OOOO {Fore.RESET}\t{Fore.BLUE}X    X{Fore.RESET}
 
-  EL UNICO Y ORIGINAL
-      3 EN RAYA"""
+  {Fore.YELLOW}EL UNICO Y ORIGINAL
+      3 EN RAYA{Fore.RESET}"""
 
 #Cadena de texto que se usa para la seleccion del modo de juego
 gameSelectionText = '''   1 Jugador: "1"
@@ -19,14 +19,19 @@ gameSelectionText = '''   1 Jugador: "1"
    Salir: "exit"'''
 
 #Sendas variables usadas como X y O del juego, puestas con el mero proposito de ahorrarme al maximo poner comillas
-x = 'X'
-o = 'O'
+x = f"{Fore.BLUE}X{Fore.RESET}"
+o = f"{Fore.RED}O{Fore.RESET}"
+
+xWin = f"{Fore.GREEN}X{Fore.RESET}"
+oWin = f"{Fore.GREEN}O{Fore.RESET}"
 
 #Mensaje de error humoristico(aunque no tiene ni puta gracia la verdad) que NO DEBERIA de aparecer en la ejecucion
 #   este solo sirve para el desarrollador para hacer pequeñas pruebas y comprobar las salidas o ubicar un error
 genericErrorMsg = "\nNo se como te la has apañado, pero la has cagado, enhorabuena"
 
 
+
+init()
 
 #Esta es la funcion de entrada del codigo, a partir de esta se llama a las otras
 # Se ejecuta por separado de GameSelection ya que esta inprime el texto de 
@@ -78,23 +83,24 @@ def autoPlayer(playerNumber):
 # jugar otra vez o salir del programa. Toma como parametros si ha ganado
 # el jugador principal de la sesion(J1 o el humano(contra la IA)), si
 # era juego contra la IA y la lista que representa el estado del tablero
-def winnerManager(winnerMain, isIA, possitionList):
+def winnerManager(winnerMain, isIA, possitionListIN):
+    possitionList = winColorCheck(possitionListIN)
     a, b, c, d, e, f, g, h, i = possitionList
-    print(f"\n#############\n# {a} | {b} | {c} #\n#-----------#\n# {d} | {e} | {f} #\n#-----------#\n# {g} | {h} | {i} #\n#############\n")
+    print(f"\n{Fore.LIGHTYELLOW_EX}#############\n#{Fore.RESET} {a} {Fore.LIGHTYELLOW_EX}|{Fore.RESET} {b} {Fore.LIGHTYELLOW_EX}|{Fore.RESET} {c} {Fore.LIGHTYELLOW_EX}#\n#-----------#\n#{Fore.RESET} {d} {Fore.LIGHTYELLOW_EX}|{Fore.RESET} {e} {Fore.LIGHTYELLOW_EX}|{Fore.RESET} {f} {Fore.LIGHTYELLOW_EX}#\n#-----------#\n#{Fore.RESET} {g} {Fore.LIGHTYELLOW_EX}|{Fore.RESET} {h} {Fore.LIGHTYELLOW_EX}|{Fore.RESET} {i} {Fore.LIGHTYELLOW_EX}#\n#############\n{Fore.RESET}")
     if winnerMain == -1:
-        print(f"¡¡¡EMPATE!!!")
+        print(f"{Fore.LIGHTMAGENTA_EX}¡¡¡EMPATE!!!{Fore.RESET}")
     elif winnerMain == 0:
         if isIA == True:
-            print("\t¡¡VICTORIA DE LA IA!!\n\nIllo, en verdad me joderia que unos numeros random me ganasen\n  jeje paquete")
+            print(f"\t{Fore.RED}¡¡VICTORIA DE LA IA!!{Fore.RESET}\n\nIllo, en verdad me joderia que unos numeros random me ganasen\n  jeje paquete")
         elif isIA == False:
-            print("\t¡¡VICTORIA DE LAS O!!\n\nEl jugador 2 ha ganado\nEspero que J1 no se haya apostado nada")
+            print(f"\t{Fore.GREEN}¡¡VICTORIA DE LAS{Fore.RESET} {Fore.RED}O{Fore.RESET}{Fore.GREEN}!!{Fore.RESET}\n\nEl jugador 2 ha ganado\nEspero que J1 no se haya apostado nada")
         else:
             print(genericErrorMsg, "0")
     elif winnerMain == 1:
         if isIA == True:
-            print("\t¡¡VICTORIA DEL JUGADOR!!\n\nAsi es, demuestrale a un cacho de metal quien manda")
+            print(f"\t{Fore.GREEN}¡¡VICTORIA DEL JUGADOR!!{Fore.RESET}\n\nAsi es, demuestrale a un cacho de metal quien manda")
         elif isIA == False:
-            print("\t¡¡VICTORIA DE LAS X!!\n\nEl jugador 1 ha ganado")
+            print(f"\t{Fore.GREEN}¡¡VICTORIA DE LAS{Fore.RESET} {Fore.BLUE}X{Fore.RESET}{Fore.GREEN}!!{Fore.RESET}\n\nEl jugador 1 ha ganado")
         else:
             print(genericErrorMsg, "1")
     else:
@@ -108,6 +114,87 @@ def winnerManager(winnerMain, isIA, possitionList):
             print("\nSaliendo del juego...")
             exit
 
+#Efectivamente, por flojo y no reestructurar el codigo he metido una nueva funcion (como si no hubiera ya)
+# Basicamente recomprueba las posiciones en las que se ha ganado, y cambia el color de azul a rojo, a verde
+# en esas casillas unicamente
+def winColorCheck(possitionList):
+    a, b, c, d, e, f, g, h, i = possitionList
+    if a == b == c:
+        if a == x:
+            a = xWin
+            b = xWin
+            c = xWin
+        else:
+            winnerMain = 0
+            a = oWin
+            b = oWin
+            c = oWin
+    elif a == d == g:
+        if a == x:
+            a = xWin
+            d = xWin
+            g = xWin
+        else:
+            a = oWin
+            d = oWin
+            g = oWin
+    elif g == h == i:
+        if g == x:
+            g = xWin
+            h = xWin
+            i = xWin
+        else:
+            g = oWin
+            h = oWin
+            i = oWin
+    elif c == f == i:
+        if c == x:
+            c = xWin
+            f = xWin
+            i = xWin
+        else:
+            c = oWin
+            f = oWin
+            i = oWin
+    elif a == e == i:
+        if a == x:
+            a = xWin
+            e = xWin
+            i = xWin
+        else:
+            a = oWin
+            e = oWin
+            i = oWin
+    elif b == e == h:
+        if b == x:
+            b = xWin
+            e = xWin
+            h = xWin
+        else:
+            b = oWin
+            e = oWin
+            h = oWin
+    elif c == e == g:
+        if c == x:
+            c = xWin
+            e = xWin
+            g = xWin
+        else:
+            c = oWin
+            e = oWin
+            g = oWin
+    elif d == e == f:
+        if d == x:
+            d = xWin
+            e = xWin
+            f = xWin
+        else:
+            d = oWin
+            e = oWin
+            f = oWin
+    newPossitionList = [a, b, c, d, e, f, g, h, i]
+    return newPossitionList
+
 #Esta funcion es parte fundamental del bucle de juego,
 # imprime por pantalla a quien le toca el siguiente turno y el 
 # estado actual del tablero. Cuando acaba de imprimir los datos
@@ -117,16 +204,16 @@ def winnerManager(winnerMain, isIA, possitionList):
 def tileDrawer(possitionList, isIA, isMain, turnCount):
     if isIA == True:
         if isMain == True:
-            print(f"\nSu turno:")
+            print(f"\nTurno del {Fore.BLUE}jugador{Fore.RESET}:")
         elif isMain == False:
-            print(f"\nTurno de la IA")
+            print(f"\nTurno de la {Fore.RED}IA{Fore.RESET}")
         else:
             print(genericErrorMsg, "3")
     elif isIA == False:
         if isMain == True:
-            print(f"\nTurno del jugador 1 (X)")
+            print(f"\nTurno del {Fore.BLUE}jugador 1{Fore.RESET} ({x})")
         elif isMain == False:
-            print(f"\nTurno del jugador 2 (O)")
+            print(f"\nTurno del {Fore.RED}jugador 2{Fore.RESET} ({o})")
         else:
             print(genericErrorMsg, "4")
     else:
@@ -285,7 +372,7 @@ def winCheck(possitionList, turnCount):
             else:
                 winnerMain = 0
         elif c == e == g:
-            if a == x:
+            if c == x:
                 winnerMain = 1
             else:
                 winnerMain = 0
