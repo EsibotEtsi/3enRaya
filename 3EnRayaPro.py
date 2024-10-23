@@ -244,7 +244,7 @@ def loopGestor(possitionList, isIA, isMain, turnCount):
             elif hasWon == 1:
                 return(1)
         else: #1P IA
-            autoIAnt(possitionList)
+            autoIA(possitionList)
             isMain = True
             turnCount += 1
             hasWon = winCheck(possitionList, turnCount)
@@ -284,19 +284,199 @@ def loopGestor(possitionList, isIA, isMain, turnCount):
             elif hasWon == 1:
                 return(1)
 
-#Esta es la funcion que gestiona el turno de la IAnt(Se llama IAnt porque de
-# inteligente no tiene nada). Toma como parametro la lista que contiene el 
-# estado de las casillas de juego, ve cuales estan libre (sin X u O) y de
-# forma aleatoria selecciona una y la marca (Siempre es el J2, asi que 
-# con O)
-def autoIAnt(possitionList):
-    availableList = []
-    for tile in possitionList:
+#Esta funcion es la que controla a la IA en su turno, despues de analizar las
+# casillas optimas para x e y, en funcion de estas elige la siguiente posicion
+def autoIA(possitionList):
+    availableListIndex = []
+    for tile in possitionList: #Este bucle for guarda en una lista las casillas disponibles
         if tile != o and tile != x:
-            availableList.append(tile)
-    randomEl = random.choice(availableList)
-    elIndex = possitionList.index(randomEl)
-    possitionList[elIndex] = o
+            availableListIndex.append(possitionList.index(tile))
+    xListIndex = []
+    cont = 0
+    for tile in possitionList: #Este bucle for guarda en una lista las casillas ocupadas por x
+        if tile == x:
+            xListIndex.append(cont)
+        cont += 1
+    oListIndex = []
+    cont = 0
+    for tile in possitionList: #Este bucle for guarda en una lista las casillas ocupadas por o
+        if tile  == o:
+            oListIndex.append(cont)
+        cont += 1
+    xListIndexBkUp = xListIndex
+    oListIndexBkUp = oListIndex
+    xPropossenTileIndex = optimunTileIndex(xListIndex, oListIndexBkUp)
+    oPropossenTileIndex = optimunTileIndex(oListIndex, xListIndexBkUp)
+    if xPropossenTileIndex == -1:
+        if oPropossenTileIndex == -1:
+            randomEl = random.choice(availableListIndex)
+            possitionList[randomEl] = o
+        else:
+            possitionList[oPropossenTileIndex] = o
+    else:
+        if oPropossenTileIndex == -1:
+            possitionList[xPropossenTileIndex] = o
+        else:
+            possitionList[oPropossenTileIndex] = o
+
+#Esta funcion es el nucleo de la IA, analiza el estado de la partida y completa los 
+# patrones posibles para x e y, devolviendo la casilla optima o -1 si la casilla
+# a escoger no evita directamente la victoria
+def optimunTileIndex(contentList, vsListBkUp):
+    chossenTileIndex = -1
+    if 4 in contentList:
+        if 0 in contentList:
+            if 8 not in vsListBkUp:
+                chossenTileIndex = 8
+            else:
+                contentList.remove(0)
+                chossenTileIndex = optimunTileIndex(contentList, vsListBkUp)
+        elif 8 in contentList:
+            if 0 not in vsListBkUp:
+                chossenTileIndex = 0
+            else:
+                contentList.remove(8)
+                chossenTileIndex = optimunTileIndex(contentList, vsListBkUp)
+        elif 1 in contentList:
+            if 7 not in vsListBkUp:
+                chossenTileIndex = 7
+            else:
+                contentList.remove(1)
+                chossenTileIndex = optimunTileIndex(contentList, vsListBkUp)
+        elif 7 in contentList:
+            if 1 not in vsListBkUp:
+                chossenTileIndex = 1
+            else:
+                contentList.remove(7)
+                chossenTileIndex = optimunTileIndex(contentList, vsListBkUp)
+        elif 2 in contentList:
+            if 6 not in vsListBkUp:
+                chossenTileIndex = 6
+            else:
+                contentList.remove(2)
+                chossenTileIndex = optimunTileIndex(contentList, vsListBkUp)
+        elif 6 in contentList:
+            if 2 not in vsListBkUp:
+                chossenTileIndex = 2
+            else:
+                contentList.remove(6)
+                chossenTileIndex = optimunTileIndex(contentList, vsListBkUp)
+        elif 3 in contentList:
+            if 5 not in vsListBkUp:
+                chossenTileIndex = 5
+            else:
+                contentList.remove(3)
+                chossenTileIndex = optimunTileIndex(contentList, vsListBkUp)
+        elif 5 in contentList:
+            if 3 not in vsListBkUp:
+                chossenTileIndex = 3
+            else:
+                contentList.remove(5)
+                chossenTileIndex = optimunTileIndex(contentList, vsListBkUp)
+    elif 0 in contentList:
+        if 1 in contentList:
+            if 2 not in vsListBkUp:
+                chossenTileIndex = 2
+            else:
+                contentList.remove(1)
+                chossenTileIndex = optimunTileIndex(contentList, vsListBkUp)
+        elif 2 in contentList:
+            if 1 not in vsListBkUp:
+                chossenTileIndex = 1
+            else:
+                contentList.remove(2)
+                chossenTileIndex = optimunTileIndex(contentList, vsListBkUp)
+        elif 3 in contentList:
+            if 6 not in vsListBkUp:
+                chossenTileIndex = 6
+            else:
+                contentList.remove(3)
+                chossenTileIndex = optimunTileIndex(contentList, vsListBkUp)
+        elif 6 in contentList:
+            if 3 not in vsListBkUp:
+                chossenTileIndex = 3
+            else:
+                contentList.remove(6)
+                chossenTileIndex = optimunTileIndex(contentList, vsListBkUp)
+        elif 8 in contentList:
+            if 4 not in vsListBkUp:
+                chossenTileIndex = 4
+            else:
+                contentList.remove(8)
+                chossenTileIndex = optimunTileIndex(contentList, vsListBkUp)
+    elif 1 in contentList:
+        if 2 in contentList:
+            if 0 not in vsListBkUp:
+                chossenTileIndex = 0
+            else:
+                contentList.remove(2)
+                chossenTileIndex = optimunTileIndex(contentList, vsListBkUp)
+        if 7 in contentList:
+            if 4 not in vsListBkUp:
+                chossenTileIndex = 4
+            else:
+                contentList.remove(7)
+                chossenTileIndex = optimunTileIndex(contentList, vsListBkUp)
+    elif 2 in contentList:
+        if 6 in contentList:
+            if 4 not in vsListBkUp:
+                chossenTileIndex = 4
+            else:
+                contentList.remove(6)
+                chossenTileIndex = optimunTileIndex(contentList, vsListBkUp)
+        if 5 in contentList:
+            if 8 not in vsListBkUp:
+                chossenTileIndex = 8
+            else:
+                contentList.remove(5)
+                chossenTileIndex = optimunTileIndex(contentList, vsListBkUp)
+        if 8 in contentList:
+            if 5 not in vsListBkUp:
+                chossenTileIndex = 5
+            else:
+                contentList.remove(8)
+                chossenTileIndex = optimunTileIndex(contentList, vsListBkUp)
+    elif 3 in contentList:
+        if 6 in contentList:
+            if 0 not in vsListBkUp:
+                chossenTileIndex = 0
+            else:
+                contentList.remove(6)
+                chossenTileIndex = optimunTileIndex(contentList, vsListBkUp)
+        if 5 in contentList:
+            if 4 not in vsListBkUp:
+                chossenTileIndex = 4
+            else:
+                contentList.remove(5)
+                chossenTileIndex = optimunTileIndex(contentList, vsListBkUp)
+    elif 5 in contentList:
+        if 8 in contentList:
+            if 2 not in vsListBkUp:
+                chossenTileIndex = 2
+            else:
+                contentList.remove(8)
+                chossenTileIndex = optimunTileIndex(contentList, vsListBkUp)
+    elif 6 in contentList:
+        if 7 in contentList:
+            if 8 not in vsListBkUp:
+                chossenTileIndex = 8
+            else:
+                contentList.remove(7)
+                chossenTileIndex = optimunTileIndex(contentList, vsListBkUp)
+        elif 8 in contentList:
+            if 7 not in vsListBkUp:
+                chossenTileIndex = 7
+            else:
+                contentList.remove(8)
+                chossenTileIndex = optimunTileIndex(contentList, vsListBkUp)
+    elif 7 in contentList:
+        if 8 in contentList:
+            if 6 not in vsListBkUp:
+                chossenTileIndex = 6
+            else:
+                contentList.remove(8)
+                chossenTileIndex = optimunTileIndex(contentList, vsListBkUp)
+    return(chossenTileIndex)
 
 #Esta funcion es la que se llama cada vez que un usuario ha de modificar la
 # la lista del tablero, y utilizando la recursividad se asegura de que se
