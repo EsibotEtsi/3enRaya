@@ -1,5 +1,6 @@
 #Modulo necesario para el funcionamiento de la IAnt
 import random
+import copy
 from colorama import init, Fore
 
 
@@ -303,8 +304,8 @@ def autoIA(possitionList):
         if tile  == o:
             oListIndex.append(cont)
         cont += 1
-    xListIndexBkUp = xListIndex
-    oListIndexBkUp = oListIndex
+    xListIndexBkUp = copy.deepcopy(xListIndex)
+    oListIndexBkUp = copy.deepcopy(oListIndex)
     xPropossenTileIndex = optimunTileIndex(xListIndex, oListIndexBkUp)
     oPropossenTileIndex = optimunTileIndex(oListIndex, xListIndexBkUp)
     if xPropossenTileIndex == -1:
