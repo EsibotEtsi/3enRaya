@@ -310,8 +310,11 @@ def autoIA(possitionList):
     oPropossenTileIndex = optimunTileIndex(oListIndex, xListIndexBkUp)
     if xPropossenTileIndex == -1:
         if oPropossenTileIndex == -1:
-            randomEl = random.choice(availableListIndex)
-            possitionList[randomEl] = o
+            if 4 in availableListIndex:
+                possitionList[4] = o
+            else:
+                randomEl = random.choice(availableListIndex)
+                possitionList[randomEl] = o
         else:
             possitionList[oPropossenTileIndex] = o
     else:
