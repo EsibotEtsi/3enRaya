@@ -30,7 +30,7 @@ def victoria(jugador):
             return True
     return False
 
-def lleno():
+def lleno():           #compruebo si hay casillas libres
     if ' ' in tablero:
         return False
     else:
@@ -38,7 +38,7 @@ def lleno():
         return True
 
 def jugadas(jugador):
-    juego=int(input(f"Jugador {jugador}, elige una casilla (1-9): " ))-1
+    juego=int(input(f"Jugador {jugador}, elige una casilla (1-9): " ))-1	#-1 para que el jugador elija del 1 al 9
     if juego in range(9):
         if tablero[juego]==' ':
             tablero[juego]=jugador
@@ -51,13 +51,11 @@ def jugadas(jugador):
         jugadas(jugador)
 
 
-def turno(jugador):
+def turno(jugador):		#cambio de turno cada vez que el bucle de jugar() se ejecuta
     if (jugador=='X'):
         return 'O'
-        print(jugador)
     else:
         return 'X'
-        print("lo que sea")
 
 def jugar():
     
